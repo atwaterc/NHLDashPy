@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/dashstyle.css') }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/nogame.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans&display=swap' rel='stylesheet' type='text/css'>
+    <title>GO LEAFS GO</title>
+</head>
+<body>
+    {% if hd != 'No Game Today'%}
+    <div class="container mb-2">
+        <h3 class="header-loop-animate">{{ hd.miscInfo.venue }} - {{ hd.miscInfo.gameDate }}</h3>
+        <div class="row">
+            <div class="col-5 offset-1">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-header text-center"><strong class="text-white">HOME</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text" >
+                                <img class="logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg">
+                            </p>
+                           <h2><strong class="text-white">{{ hd.home.wins }} - {{ hd.home.losses }} - {{ hd.home.ot }}</strong></h2>
+                        </div>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="card text-white bg-secondary mb-3">
+                    <div class="card-header text-center"><strong class="text-white">AWAY</strong></div>
+                        <div class="card-body text-center">
+                            <p class="card-text" >
+                                <img class="logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg">
+                            </p>
+                            <h2><strong class="text-white">{{ hd.away.wins }} - {{ hd.away.losses }} - {{ hd.away.ot }}</strong></h2>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-10 offset-1">
+                <div class="card text-white bg-secondary mb-3">
+                    {% if hd.miscInfo.gameStatus == "Final" %}
+                    <div class="card-header text-center"><strong class="text-white">FINAL SCORE</strong></div>
+                    {% else %}
+                    <div class="card-header text-center"><strong class="text-white">CURRENT SCORELINE - PERIOD {{ hd.miscInfo.currentPeriod }}</strong></div>
+                    {% endif %}
+                        <div class="card-body text-center">
+                            <p class="card-text" >
+                                {% if hd.home.totalGoals > hd.away.totalGoals  %}
+                                <span class="score-font"><span class="winning-team">{{ hd.home.totalGoals }}</span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;{{ hd.away.totalGoals }}
+                                </span>
+                                {% elif hd.home.totalGoals < hd.away.totalGoals %}
+                                <span class="score-font">{{ hd.home.totalGoals }}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;<span class="winning-team">{{ hd.away.totalGoals }}</span>
+                                </span>
+                                {% else %}
+                                <span class="score-font">{{ hd.home.totalGoals }}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;{{ hd.away.totalGoals }}
+                                </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-10 offset-1">
+                <div class="card text-black bg-secondary mb-3">
+                    <div class="card-header text-center">Boxscore</div>
+                        <div class="card-body text-center">
+                            <p class="card-text" >
+                                <table class="table table-bordered table-secondary">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">GOALS</th>
+                                      <th scope="col">1st</th>
+                                      <th scope="col">2nd</th>
+                                      <th scope="col">3rd</th>
+                                      <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td>
+                                              <img class="boxscore-logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg">
+                                          </td>
+                                          {% for key, p in hd['periods'].items() %}
+                                          <td>{{ p.home.goals }}</td>
+                                          {% endfor %}
+                                          <td class="bold-font">{{ hd.home.totalGoals if hd.home.totalGoals else 0 }}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>
+                                              <img class="boxscore-logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg">
+                                          </td>
+                                          {% for key, p in hd['periods'].items() %}
+                                          <td>{{ p.away.goals }}</td>
+                                          {% endfor %}
+                                          <td class="bold-font">{{ hd.away.totalGoals }}</td>
+                                      </tr>
+                                  </tbody>
+                                </table>
+
+                                <table class="table table-bordered table-secondary">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">SHOTS</th>
+                                      <th scope="col">1st</th>
+                                      <th scope="col">2nd</th>
+                                      <th scope="col">3rd</th>
+                                      <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td>
+                                              <img class="boxscore-logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg">
+                                          </td>
+                                          {% for key, p in hd['periods'].items() %}
+                                          <td>{{ p.home.shotsOnGoal }}</td>
+                                          {% endfor %}
+                                          <td class="bold-font">{{ hd.home.totalShots }}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>
+                                              <img class="boxscore-logo"
+                                    src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg">
+                                          </td>
+                                          {% for key, p in hd['periods'].items() %}
+                                          <td>{{ p.away.shotsOnGoal }}</td>
+                                          {% endfor %}
+                                          <td class="bold-font">{{ hd.away.totalShots }}</td>
+                                      </tr>
+                                  </tbody>
+                                </table>
+                            </p>
+                        </div>
+                </div>
+            </div>
+        </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-10 offset-1 mt-5">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header text-center"><strong class="text-white">NO GAME TODAY</strong></div>
+                <div class="card-body text-center">
+                    <p class="card-text" >
+                        <img class="nogame-logo"
+                            src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/10.svg">
+                    </p>
+                </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-10 offset-1">
+        <div class="text-center">
+            <div class="text-center">Team Stats</div>
+            <p class="card-text">
+                <table class="table table-bordered table-dark">
+                  <thead>
+                    <tr>
+                      <th scope="col">GP</th>
+                      <th scope="col">W</th>
+                      <th scope="col">L</th>
+                      <th scope="col">OT</th>
+                      <th scope="col">PTS</th>
+                      <th scope="col">P%</th>
+                      <th scope="col">GPG</th>
+                      <th scope="col">GAPG</th>
+                      <th scope="col">PP%</th>
+                      <th scope="col">PK%</th>
+                      <th scope="col">SPG</th>
+                      <th scope="col">SAPG</th>
+                      <th scope="col">FO%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>{{ tmls.stats.gamesPlayed }}</td>
+                          <td>{{ tmls.stats.wins }}</td>
+                          <td>{{ tmls.stats.losses }}</td>
+                          <td>{{ tmls.stats.ot }}</td>
+                          <td>{{ tmls.stats.pts }}</td>
+                          <td>{{ tmls.stats.ptPctg }}</td>
+                          <td>{{ tmls.stats.goalsPerGame }}</td>
+                          <td>{{ tmls.stats.goalsAgainstPerGame }}</td>
+                          <td>{{ tmls.stats.powerPlayPercentage }}</td>
+                          <td>{{ tmls.stats.penaltyKillPercentage }}</td>
+                          <td>{{ tmls.stats.shotsPerGame }}</td>
+                          <td>{{ tmls.stats.shotsAllowed }}</td>
+                          <td>{{ tmls.stats.faceOffWinPercentage }}</td>
+                      </tr>
+                  </tbody>
+                </table>
+                <table class="table table-bordered table-dark">
+                  <thead>
+                    <tr>
+                      <th scope="col">GP</th>
+                      <th scope="col">W</th>
+                      <th scope="col">L</th>
+                      <th scope="col">OT</th>
+                      <th scope="col">PTS</th>
+                      <th scope="col">P%</th>
+                      <th scope="col">GPG</th>
+                      <th scope="col">GAPG</th>
+                      <th scope="col">PP%</th>
+                      <th scope="col">PK%</th>
+                      <th scope="col">SPG</th>
+                      <th scope="col">SAPG</th>
+                      <th scope="col">FO%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>{{ tmls.stats.gamesPlayed }}</td>
+                          <td>{{ tmls.rankings.wins }}</td>
+                          <td>{{ tmls.rankings.losses }}</td>
+                          <td>{{ tmls.rankings.ot }}</td>
+                          <td>{{ tmls.rankings.pts }}</td>
+                          <td>{{ tmls.rankings.ptPctg }}</td>
+                          <td>{{ tmls.rankings.goalsPerGame }}</td>
+                          <td>{{ tmls.rankings.goalsAgainstPerGame }}</td>
+                          <td>{{ tmls.rankings.powerPlayPercentage }}</td>
+                          <td>{{ tmls.rankings.penaltyKillPercentage }}</td>
+                          <td>{{ tmls.rankings.shotsPerGame }}</td>
+                          <td>{{ tmls.rankings.shotsAllowed }}</td>
+                          <td>{{ tmls.rankings.faceOffWinPercentage }}</td>
+                      </tr>
+                  </tbody>
+                </table>
+            </p>
+    </div>
+</div>
+{% endif %}
+</body>
+</html>

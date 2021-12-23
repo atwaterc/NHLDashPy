@@ -1,0 +1,54 @@
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+.container {
+    background-color: #add8e6 !important;
+    height: auto;
+}
+
+.logo {
+    max-width: 70%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.winning-team {
+   color:  blue;
+   font-weight: 1000;
+}
+
+.score-font {
+   font-size: 50px;
+}
+
+.boxscore-logo {
+    max-width: 30%;
+    height:  auto;
+}
+
+.bold-font {
+   font-weight: 900;
+}
+
+.header-loop-animate {
+  animation: slidein 15s linear 0s infinite;
+}
+
+@keyframes slidein {
+  from {
+    margin-left: -30%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: 105%;
+    width: 300%;
+  }
+}
+
