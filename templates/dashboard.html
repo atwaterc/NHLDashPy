@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <!-- <meta http-equiv="refresh" content="5"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/dashstyle.css') }}">
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/nogame.css') }}">
@@ -10,7 +11,7 @@
     <title>GO LEAFS GO</title>
 </head>
 <body>
-    {% if hd != 'No Game Today'%}
+    {% if hd != 'No Game Today' and hd != None%}
     <div class="container mb-2">
         <h3 class="header-loop-animate">{{ hd.miscInfo.venue }} - {{ hd.miscInfo.gameDate }}</h3>
         <div class="row">
@@ -39,7 +40,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+<!--         <div class="row">
             <div class="col-10 offset-1">
                 <div class="card text-white bg-secondary mb-3">
                     {% if hd.miscInfo.gameStatus == "Final" %}
@@ -66,7 +67,7 @@
                         </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="row">
             <div class="col-10 offset-1">
                 <div class="card text-black bg-secondary mb-3">
@@ -89,9 +90,22 @@
                                               <img class="boxscore-logo"
                                     src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg">
                                           </td>
-                                          {% for key, p in hd['periods'].items() %}
-                                          <td>{{ p.home.goals }}</td>
-                                          {% endfor %}
+                                        <!-- Period 1 -->
+                                          {% if hd.periods[1] %}
+                                          <td>{{ hd.periods[1].home.goals or 0 }}</td>
+                                          {% endif %}
+                                        <!-- Period 2 -->
+                                          {% if hd.periods[2] %}
+                                          <td>{{ hd.periods[2].home.goals or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
+                                        <!-- Period 3 -->
+                                          {% if hd.periods[3] %}
+                                          <td>{{ hd.periods[3].home.goals or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
                                           <td class="bold-font">{{ hd.home.totalGoals if hd.home.totalGoals else 0 }}</td>
                                       </tr>
                                       <tr>
@@ -99,9 +113,22 @@
                                               <img class="boxscore-logo"
                                     src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg">
                                           </td>
-                                          {% for key, p in hd['periods'].items() %}
-                                          <td>{{ p.away.goals }}</td>
-                                          {% endfor %}
+                                        <!-- Period 1 -->
+                                          {% if hd.periods[1] %}
+                                          <td>{{ hd.periods[1].away.goals or 0 }}</td>
+                                          {% endif %}
+                                        <!-- Period 2 -->
+                                          {% if hd.periods[2] %}
+                                          <td>{{ hd.periods[2].away.goals or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
+                                        <!-- Period 3 -->
+                                          {% if hd.periods[3] %}
+                                          <td>{{ hd.periods[3].away.goals or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
                                           <td class="bold-font">{{ hd.away.totalGoals }}</td>
                                       </tr>
                                   </tbody>
@@ -123,9 +150,22 @@
                                               <img class="boxscore-logo"
                                     src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg">
                                           </td>
-                                          {% for key, p in hd['periods'].items() %}
-                                          <td>{{ p.home.shotsOnGoal }}</td>
-                                          {% endfor %}
+                                          <!-- Period 1 -->
+                                          {% if hd.periods[1] %}
+                                          <td>{{ hd.periods[1].home.shotsOnGoal or 0 }}</td>
+                                          {% endif %}
+                                        <!-- Period 2 -->
+                                          {% if hd.periods[2] %}
+                                          <td>{{ hd.periods[2].home.shotsOnGoal or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
+                                        <!-- Period 3 -->
+                                          {% if hd.periods[3] %}
+                                          <td>{{ hd.periods[3].home.shotsOnGoal or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
                                           <td class="bold-font">{{ hd.home.totalShots }}</td>
                                       </tr>
                                       <tr>
@@ -133,9 +173,22 @@
                                               <img class="boxscore-logo"
                                     src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg">
                                           </td>
-                                          {% for key, p in hd['periods'].items() %}
-                                          <td>{{ p.away.shotsOnGoal }}</td>
-                                          {% endfor %}
+                                        <!-- Period 1 -->
+                                          {% if hd.periods[1] %}
+                                          <td>{{ hd.periods[1].away.shotsOnGoal or 0 }}</td>
+                                          {% endif %}
+                                        <!-- Period 2 -->
+                                          {% if hd.periods[2] %}
+                                          <td>{{ hd.periods[2].away.shotsOnGoal or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
+                                        <!-- Period 3 -->
+                                          {% if hd.periods[3] %}
+                                          <td>{{ hd.periods[3].away.shotsOnGoal or 0 }}</td>
+                                          {% else %}
+                                          <td>0</td>
+                                          {% endif %}
                                           <td class="bold-font">{{ hd.away.totalShots }}</td>
                                       </tr>
                                   </tbody>
@@ -145,6 +198,90 @@
                 </div>
             </div>
         </div>
+            <div class="row">
+                <div class="col-6">
+                   <div class="card text-black bg-secondary mb-3">
+                        <div class="card-header text-center"><strong class="text-white"><img class="stats-logo"
+                                        src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.home.id }}.svg"></th></strong></div>
+                            <div class="card-body text-center">
+                                <p class="card-text" >
+                                    <table class="table table-bordered table-secondary stat-font">
+                                      <thead>
+                                        <tr>
+                                          <th scope="col">#</th>
+                                          <th scope="col">Player</th>
+                                          <th scope="col">G</th>
+                                          <th scope="col">A</th>
+                                          <th scope="col">P</th>
+                                          <th scope="col">+/-</th>
+                                          <th scope="col">SOG</th>
+                                          <th scope="col">Hits</th>
+                                          <!-- <th scope="col">FO%</th> -->
+                                          <th scope="col">TOI</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                          {% for p in hdp.home %}
+                                        <tr>
+                                          <td>{{ p.number }}</td>
+                                          <td>{{ p.name }}</td>
+                                          <td>{{ p.goals }}</td>
+                                          <td>{{ p.assists }}</td>
+                                          <td>{{ p.points }}</td>
+                                          <td>{{ p.plusMinus }}</td>
+                                          <td>{{ p.shots }}</td>
+                                          <td>{{ p.hits }}</td>
+                                          <td>{{ p.toi }}</td>
+                                        </tr>
+                                          {% endfor %}
+                                  </tbody>
+                                    </table>
+                                </p>
+                            </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                   <div class="card text-black bg-secondary mb-3">
+                        <div class="card-header text-center"><strong class="text-white"><img class="stats-logo"
+                                        src="https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/{{ hd.away.id }}.svg"></th></strong></div>
+                            <div class="card-body text-center">
+                                <p class="card-text" >
+                                    <table class="table table-bordered table-secondary stat-font">
+                                      <thead>
+                                        <tr>
+                                          <th scope="col">#</th>
+                                          <th scope="col">Player</th>
+                                          <th scope="col">G</th>
+                                          <th scope="col">A</th>
+                                          <th scope="col">P</th>
+                                          <th scope="col">+/-</th>
+                                          <th scope="col">SOG</th>
+                                          <th scope="col">Hits</th>
+                                          <!-- <th scope="col">FO%</th> -->
+                                          <th scope="col">TOI</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                          {% for p in hdp.away %}
+                                        <tr>
+                                          <td>{{ p.number }}</td>
+                                          <td>{{ p.name }}</td>
+                                          <td>{{ p.goals }}</td>
+                                          <td>{{ p.assists }}</td>
+                                          <td>{{ p.points }}</td>
+                                          <td>{{ p.plusMinus }}</td>
+                                          <td>{{ p.shots }}</td>
+                                          <td>{{ p.hits }}</td>
+                                          <td>{{ p.toi }}</td>
+                                        </tr>
+                                          {% endfor %}
+                                  </tbody>
+                                    </table>
+                                </p>
+                            </div>
+                    </div>
+                </div>
+            </div>
 </div>
 {% else %}
 <div class="row">

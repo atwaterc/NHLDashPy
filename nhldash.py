@@ -15,25 +15,29 @@ full_game_data['miscInfo']['gameId'] = 0
 
 # define stats for players during game
 player_game_stats = {}
-
+player_game_stats['home'] = {}
+player_game_stats['away'] = {}
+away_team_stats = []
+home_team_stats = []
 # define Maple Leaf team stats
 maple_team_stats = {}
 maple_team_stats['stats'] = {}
 maple_team_stats['rankings'] = {}
 
 def getData():
-    team_schedule_data = "https://statsapi.web.nhl.com/api/v1/schedule?teamId=10"
+    print('CALLING GETDATA')
+    team_schedule_data = "https://statsapi.web.nhl.com/api/v1/schedule?teamId=14"
     schedule_response = requests.get(team_schedule_data)
 
     data = schedule_response.json()
-    #print(data)
+    print(data)
 
     if data['dates']:
         try:
-            gameId = 2021020501
-            #gameId = data['dates'][0]['games'][0]['gamePk']
+            #gameId = 2020020004
+            gameId = data['dates'][0]['games'][0]['gamePk']
             full_game_data['miscInfo']['gameId'] = gameId
-
+            print('INSIDE GAME DATA')
             print(gameId)
 
             # get and format game start time
@@ -128,18 +132,70 @@ def getData():
         return 'No Game Today'
 
 
-def getPlayerData():
-    if full_game_data['miscInfo']['gameId'] == 0:
-        return 'No Game Today'
-
-    gameId = full_game_data['miscInfo']['gameId']
+def getPlayerData(game_id):
+    print('CALLING GETPLAYERDATA')
+    # if full_game_data['miscInfo']['gameId'] == 0:
+    #     return 'No Game Today'
+    gameId = game_id
+    #gameId = 2020020004
+    #gameId = full_game_data['miscInfo']['gameId']
 
     game_player_data_url = "https://statsapi.web.nhl.com/api/v1/game/"+ str(gameId) +"/boxscore"
     game_player_data_response = requests.get(game_player_data_url)
     game_player_data = game_player_data_response.json()
 
-    #for player in game_player_data['teams']['away']:
-    #print(game_player_data)
+    player_s_home = game_player_data.get('teams', 0).get('home', 0).get('players', 0)
+    player_s_away = game_player_data.get('teams', 0).get('away', 0).get('players', 0)
+
+    for player in player_s_home:
+        player_game_stats['home'] = {}
+        if player != None:
+            #get home team player stats
+            ind_player_h = game_player_data.get('teams', 0).get('home', 0).get('players', 0).get(player, 0)
+            player_game_stats['home']['position'] = ind_player_h.get('person').get('primaryPosition').get('code')
+            player_game_stats['home']['id'] = ind_player_h.get('person', 0).get('id', "")
+            player_game_stats['home']['name'] = ind_player_h.get('person', 0).get('fullName', "")
+            player_game_stats['home']['number'] = ind_player_h.get('jerseyNumber', 0)
+
+            ind_player_h_stats = ind_player_h.get('stats').get('skaterStats')
+
+            if ind_player_h.get('stats').get('skaterStats') and player_game_stats['home']['position'] != 'G':
+                player_game_stats['home']['goals'] = ind_player_h.get('stats').get('skaterStats').get('goals')
+                player_game_stats['home']['assists'] = ind_player_h.get('stats').get('skaterStats').get('assists')
+                player_game_stats['home']['points'] = player_game_stats['home']['assists'] + player_game_stats['home']['goals']
+                player_game_stats['home']['plusMinus'] = ind_player_h.get('stats').get('skaterStats').get('plusMinus')
+                player_game_stats['home']['shots'] = ind_player_h.get('stats').get('skaterStats').get('shots')
+                player_game_stats['home']['hits'] = ind_player_h.get('stats').get('skaterStats').get('hits')
+                player_game_stats['home']['toi'] = ind_player_h.get('stats').get('skaterStats').get('timeOnIce')
+                home_team_stats.append(player_game_stats['home'])
+
+    for player in player_s_away:
+        player_game_stats['away'] = {}
+        if player != None:
+            #get away team player stats
+            ind_player_a = game_player_data.get('teams', 0).get('away', 0).get('players', 0).get(player, 0)
+            player_game_stats['away']['position'] = ind_player_a.get('person').get('primaryPosition').get('code')
+            player_game_stats['away']['id'] = ind_player_a.get('person', 0).get('id', "")
+            player_game_stats['away']['name'] = ind_player_a.get('person', 0).get('fullName', "")
+            player_game_stats['away']['number'] = ind_player_a.get('jerseyNumber', 0)
+
+            ind_player_a_stats = ind_player_a.get('stats').get('skaterStats')
+            # print(ind_player_a_stats)
+
+            if ind_player_a.get('stats').get('skaterStats') and player_game_stats['away']['position'] != 'G':
+                player_game_stats['away']['goals'] = ind_player_a.get('stats').get('skaterStats').get('goals')
+                player_game_stats['away']['assists'] = ind_player_a.get('stats').get('skaterStats').get('assists')
+                player_game_stats['away']['points'] = player_game_stats['away']['assists'] + player_game_stats['away']['goals']
+                player_game_stats['away']['plusMinus'] = ind_player_a.get('stats').get('skaterStats').get('plusMinus')
+                player_game_stats['away']['shots'] = ind_player_a.get('stats').get('skaterStats').get('shots')
+                player_game_stats['away']['hits'] = ind_player_a.get('stats').get('skaterStats').get('hits')
+                player_game_stats['away']['toi'] = ind_player_a.get('stats').get('skaterStats').get('timeOnIce')
+                away_team_stats.append(player_game_stats['away'])
+
+    player_game_stats['away'] = away_team_stats
+    player_game_stats['home'] = home_team_stats
+    print(player_game_stats)
+    return player_game_stats
 
 def getMapleLeafsData():
     maple_data_url = "https://statsapi.web.nhl.com/api/v1/teams/10/stats"
@@ -151,5 +207,6 @@ def getMapleLeafsData():
     maple_team_stats['rankings'] = maple_data['stats'][1]['splits'][0]['stat']
 
     return maple_team_stats
-#print(getMapleLeafsData())
-#print(getPlayerData())
+#print(getData())
+# getData()
+# getPlayerData(2021020537)
